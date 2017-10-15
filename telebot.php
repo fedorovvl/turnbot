@@ -1,33 +1,9 @@
-<?php
+ <?php
 include("Telegram.php");
-$find_hitlers = array(
-    "гитлер",
-    "рейх",
-    "зига",
-    "hitler",
-    "1488",
-    "рейх",
-    "жечь евреев",
-    "жги евреев",
-    "холокост"
-);
-$find_boobs   = array(
-    "сиськи",
-    "сисек",
-    "сисечки",
-    "сисяндры",
-    "сисюли",
-    "/boobs",
-    "/boobs@Turn_Bot"
-);
-$find_butts   = array(
-    "жопа",
-    "попа",
-    "попка",
-    "жопка",
-    "жопо",
-    "жопунька"
-);
+$find_hitlers = array("гитлер","рейх","зига","hitler","1488","рейх","жечь евреев","жги евреев","холокост");
+$find_boobs   = array("сиськи","сисек","сисечки","сисяндры","сисюли","/boobs","/boobs@Turn_Bot");
+$find_butts   = array("жопа","попа","попка","жопка","жопо","жопунька","кардан","кардашьян","седло");
+$find_cats    = array("кот","котейка","котюня","шерстяной","киса","кошко","котэ");
 $bot_id       = "";
 $yandtrankey  = "";
 $openwethid   = "";
@@ -36,10 +12,8 @@ $text         = $telegram->Text();
 $mb_text      = mb_strtolower($text, 'utf-8');
 $chat_id      = $telegram->ChatID();
 
-function checkArr($arr)
-{
-    $check = array_filter($arr, function($k)
-    {
+function checkArr($arr) {
+    $check = array_filter($arr, function($k) {
         global $mb_text;
         return mb_stripos($mb_text, $k) !== false;
     });
@@ -61,23 +35,23 @@ if ($text == "/help" OR $text == "/help@Turn_Bot") {
     );
     $telegram->sendMessage($content);
 }
+// Месасы
+if ($text == "/mem" || $text == "/meme") {
+    $opts    = array('http' => array('method' => "GET",'header' => "Cookie: beget=begetok;\r\n"));
+    $context = stream_context_create($opts);
+    $data    = file_get_contents("http://admem.ru/rndm", false, $context);
+    preg_match_all("/\<img src=\"\/\/(admem\.ru.+)\" alt.+\>/", $data, $matches);
+    $pic = $matches[1][array_rand($matches[1], 1)];
+    $telegram->sendPhoto(array(
+        'chat_id' => $chat_id,
+        'photo' => "http://" . $pic
+    ));
+}
 // Шутки с баша
 if ($text == "/bash" OR $text == "/bash@Turn_Bot") {
     $html    = file_get_contents('http://bash.im/forweb/?u');
-    $sim     = array(
-        "document.write(borq);",
-        "var borq='';",
-        "borq +=",
-        "&quot;",
-        "<' + 'br>"
-    );
-    $rep     = array(
-        "",
-        "",
-        "",
-        "'",
-        "\n"
-    );
+    $sim     = array("document.write(borq);","var borq='';","borq +=","&quot;","<' + 'br>");
+    $rep     = array("","","","'","\n");
     $html    = explode(' ]', substr(strip_tags(str_replace($sim, $rep, $html), '\n'), 4, -30));
     $content = array(
         'chat_id' => $chat_id,
@@ -189,7 +163,7 @@ if ($text == "/advice" OR $text == "/advice@Turn_Bot") {
     ));
 }
 //Котик
-if ($text == "/cat" OR $text == "/cat@Turn_Bot") {
+if (checkArr($find_cats) === true) {
     $rss   = simplexml_load_file("http://thecatapi.com/api/images/get?format=xml");
     $reply = (get_headers($rss->data->images->image->url) !== false) ? $rss->data->images->image->url : "Котик сдох. Попробуй еще раз.";
     $telegram->sendMessage(array(
@@ -240,4 +214,4 @@ if ($text == "/we" OR $text == "/we@Turn_Bot") {
     );
     $telegram->sendMessage($content);
 }
-?> 
+?>
