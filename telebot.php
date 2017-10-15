@@ -8,10 +8,25 @@ $find_meme    = array("мемас","баянчег","боян","баянист")
 $bot_id       = "";
 $yandtrankey  = "";
 $openwethid   = "";
+$s_timer      = 10;
+
+
 $telegram     = new Telegram($bot_id);
 $text         = $telegram->Text();
 $mb_text      = mb_strtolower($text, 'utf-8');
 $chat_id      = $telegram->ChatID();
+$s_timers     = (object)array('boobs' => 0, 'butts' => 0, 'cats' => 0, 'meme' => 0);
+$s_timers     = file_exists("timers.txt") ? json_decode(file_get_contents("timers.txt")) : $s_timers;
+
+function checkTimer($type, $timers, $s_timer)
+{
+    if ($timers->$type + $s_timer < time()) {
+	$timers->$type = time();
+	file_put_contents("timers.txt", json_encode($timers));
+	return true;
+    }
+    return false;
+}
 
 function checkArr($arr) {
     $check = array_filter($arr, function($k) {
@@ -37,7 +52,7 @@ if ($text == "/help" OR $text == "/help@Turn_Bot") {
     $telegram->sendMessage($content);
 }
 // Месасы
-if ($text == "/mem" || $text == "/meme" || checkArr($find_meme) === true) {
+if ((in_array($text, array("/mem", "/meme")) || checkArr($find_meme) === true) && checkTimer('meme', $s_timers, $s_timer)) {
     $opts    = array('http' => array('method' => "GET",'header' => "Cookie: beget=begetok;\r\n"));
     $context = stream_context_create($opts);
     $data    = file_get_contents("http://admem.ru/rndm", false, $context);
@@ -164,7 +179,7 @@ if ($text == "/advice" OR $text == "/advice@Turn_Bot") {
     ));
 }
 //Котик
-if (checkArr($find_cats) === true) {
+if (checkArr($find_cats) === true && checkTimer('cats', $s_timers, $s_timer)) {
     $rss   = simplexml_load_file("http://thecatapi.com/api/images/get?format=xml");
     $reply = (get_headers($rss->data->images->image->url) !== false) ? $rss->data->images->image->url : "Котик сдох. Попробуй еще раз.";
     $telegram->sendMessage(array(
@@ -173,7 +188,7 @@ if (checkArr($find_cats) === true) {
     ));
 }
 // Сиськи
-if (checkArr($find_boobs) === true) {
+if (checkArr($find_boobs) === true && checkTimer('boobs', $s_timers, $s_timer)) {
     $data = json_decode(file_get_contents("http://api.oboobs.ru/boobs/1/1/random/"));
     $telegram->sendPhoto(array(
         'chat_id' => $chat_id,
@@ -181,7 +196,7 @@ if (checkArr($find_boobs) === true) {
     ));
 }
 // Жопки
-if (checkArr($find_butts) === true) {
+if (checkArr($find_butts) === true && checkTimer('butts', $s_timers, $s_timer)) {
     $data = json_decode(file_get_contents("http://api.obutts.ru/butts/1/1/random/"));
     $telegram->sendPhoto(array(
         'chat_id' => $chat_id,
