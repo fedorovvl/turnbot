@@ -1,9 +1,10 @@
- <?php
+<?php
 include("Telegram.php");
 $find_hitlers = array("гитлер","рейх","зига","hitler","1488","рейх","жечь евреев","жги евреев","холокост");
 $find_boobs   = array("сиськи","сисек","сисечки","сисяндры","сисюли","/boobs","/boobs@Turn_Bot");
 $find_butts   = array("жопа","попа","попка","жопка","жопо","жопунька","кардан","кардашьян","седло");
 $find_cats    = array("кот","котейка","котюня","шерстяной","киса","кошко","котэ");
+$find_meme    = array("мемас","баянчег","боян","баянист");
 $bot_id       = "";
 $yandtrankey  = "";
 $openwethid   = "";
@@ -36,7 +37,7 @@ if ($text == "/help" OR $text == "/help@Turn_Bot") {
     $telegram->sendMessage($content);
 }
 // Месасы
-if ($text == "/mem" || $text == "/meme") {
+if ($text == "/mem" || $text == "/meme" || checkArr($find_meme) === true) {
     $opts    = array('http' => array('method' => "GET",'header' => "Cookie: beget=begetok;\r\n"));
     $context = stream_context_create($opts);
     $data    = file_get_contents("http://admem.ru/rndm", false, $context);
