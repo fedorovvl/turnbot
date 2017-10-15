@@ -202,7 +202,7 @@ class turnBot {
         $text = urlencode(join(' ', array_slice($arr_text, 2)));
         $url  = "https://translate.yandex.net/api/v1.5/tr.json/translate?key=" . $this->yandtrankey . "&text=" . $text . "&lang=" . $arr_text[1];
         $data = json_decode(file_get_contents($url));
-        $this->sendMessage($data->text[0]);
+        $this->_sendText($data->text[0]);
     }
     
     function weMessage()
@@ -215,12 +215,12 @@ class turnBot {
         $reply .= "Температура: " . $data->main->temp . "°C\n";
         $reply .= "Давление: " . $pressure . "рт/ст\n";
         $reply .= "Влажность: " . $data->main->humidity . "%\n";
-        $this->sendMessage($reply);
+        $this->_sendText($reply);
     }
     
     function hitlerMessage()
     {
-        $this->sendSticker($this->hitlers[rand(0, (count($this->hitlers) - 1))]);
+        $this->_sendSticker($this->hitlers[rand(0, (count($this->hitlers) - 1))]);
     }
     
     function boobsMessage()
@@ -228,7 +228,7 @@ class turnBot {
         if(!$this->_checkTimer('boobs'))
             return false;
         $data = json_decode(file_get_contents("http://api.oboobs.ru/boobs/1/1/random/"));
-        $this->sendPhoto("http://media.oboobs.ru/" . $data[0]->preview);
+        $this->_sendPhoto("http://media.oboobs.ru/" . $data[0]->preview);
     }
     
     function buttsMessage()
@@ -236,7 +236,7 @@ class turnBot {
         if(!$this->_checkTimer('butts'))
             return false;
         $data = json_decode(file_get_contents("http://api.obutts.ru/butts/1/1/random/"));
-        $this->sendPhoto("http://media.obutts.ru/" . $data[0]->preview);
+        $this->_sendPhoto("http://media.obutts.ru/" . $data[0]->preview);
     }
     
     function catsMessage()
@@ -245,7 +245,7 @@ class turnBot {
             return false;
         $rss   = simplexml_load_file("http://thecatapi.com/api/images/get?format=xml");
         $reply = (get_headers($rss->data->images->image->url) !== false) ? $rss->data->images->image->url : "Котик сдох. Попробуй еще раз.";
-        $this->sendMessage($reply);
+        $this->_sendPhoto($reply);
     }
     
     function helpMessage()
@@ -261,7 +261,7 @@ class turnBot {
             '/cat - котик',
             '/mem - мемас'
         );
-        $this->sendMessage(join("\n", $helps));
+        $this->_sendText(join("\n", $helps));
     }
     
     function memeMessage()
@@ -273,7 +273,7 @@ class turnBot {
         $data    = file_get_contents("http://admem.ru/rndm", false, $context);
         preg_match_all("/\<img src=\"\/\/(admem\.ru.+)\" alt.+\>/", $data, $matches);
         $pic = $matches[1][array_rand($matches[1], 1)];
-        $this->sendPhoto('http://'.$pic);
+        $this->_sendPhoto('http://'.$pic);
     }
     
     function bashMessage()
@@ -282,7 +282,7 @@ class turnBot {
         $sim     = array("document.write(borq);","var borq='';","borq +=","&quot;","<' + 'br>");
         $rep     = array("","","","'","\n");
         $html    = explode(' ]', substr(strip_tags(str_replace($sim, $rep, $html), '\n'), 4, -30));
-        $this->sendMessage(html_entity_decode($html[1]));
+        $this->_sendText(html_entity_decode($html[1]));
     }
     
     function curMessage()
@@ -291,7 +291,7 @@ class turnBot {
         $usd = $cur->Valute[10]->Name . " " . $cur->Valute[10]->Value;
         $eur = $cur->Valute[11]->Name . " " . $cur->Valute[11]->Value;
         $pln = $cur->Valute[19]->Name . " " . $cur->Valute[19]->Value;
-        $this->sendMessage($usd . "\n" . $eur . "\n" . $pln);
+        $this->_sendText($usd . "\n" . $eur . "\n" . $pln);
     }
     
     function newsMessage()
@@ -303,7 +303,7 @@ class turnBot {
             $link  = $rss->channel->item[$i]->link;
             $result .= $i . ") [" . trim($title) . "](" . $link . ")\n";
         }
-        $this->sendMessage($result, array(
+        $this->_sendText($result, array(
             'parse_mode' => 'Markdown',
             'disable_web_page_preview' => 'true'
         ));
@@ -318,7 +318,7 @@ class turnBot {
             'Пример - /tr ru hello',
             '[Список языков](https://tech.yandex.ru/translate/doc/dg/concepts/api-overview-docpage/)'
         );
-        $this->sendMessage(join("\n", $helps), array(
+        $this->_sendText(join("\n", $helps), array(
             'parse_mode' => 'Markdown',
             'disable_web_page_preview' => 'true'
         ));
@@ -327,7 +327,7 @@ class turnBot {
     function adviceMessage()
     {
         $data = json_decode(file_get_contents("http://fucking-great-advice.ru/api/random"));
-        $this->sendMessage(html_entity_decode($data->text));
+        $this->_sendText(html_entity_decode($data->text));
     }
     
     function weHelpMessage()
@@ -337,7 +337,7 @@ class turnBot {
             '/we [город]',
             'Пример - /we Калининград'
         );
-        $this->sendMessage(join("\n", $helps), array(
+        $this->_sendText(join("\n", $helps), array(
             'parse_mode' => 'Markdown',
             'disable_web_page_preview' => 'true'
         ));
