@@ -140,6 +140,10 @@ class turnBot {
             case "/cur@Turn_Bot":
                 return $this->curMessage();
                 break;
+            case "/cat":
+            case "/kitty":
+                return $this->catsMessage();
+                break;
             case "/news":
             case "/news@Turn_Bot":
                 return $this->newsMessage();
