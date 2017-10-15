@@ -114,7 +114,7 @@ class turnBot {
     function _sendSticker($sticker)
     {
         $content = array(
-            'chat_id' => $chat_id,
+            'chat_id' => $this->chat_id,
             'sticker' => $sticker
         );
         $this->telegram->sendSticker($content);
